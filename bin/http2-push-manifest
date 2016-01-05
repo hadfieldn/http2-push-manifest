@@ -111,7 +111,7 @@ function writeManifest(manifest, opt_content) {
   console.log(`Wrote ${manifest.name}`);
 }
 
-function generateManifest(manifestName, base, files, singleFile) {
+function generateManifest(manifestName, basePath, files, singleFile) {
   if (!files.length) {
     let manifest = new Manifest({name: manifestName});
     writeManifest(manifest, jsonOutput);
@@ -125,7 +125,6 @@ function generateManifest(manifestName, base, files, singleFile) {
     f = `.${path.sep}${f}`;
   }
 
-  let basePath = base || f.slice(0, f.lastIndexOf(path.sep));
   let inputPath = path.relative(basePath, f);
 
   if (!basePath || !inputPath) {
@@ -144,7 +143,7 @@ function generateManifest(manifestName, base, files, singleFile) {
 
     // Remove processed file from list and proceed with next.
     files.shift();
-    generateManifest(manifestName, files, singleFile);
+    generateManifest(manifestName, basePath, files, singleFile);
   }).catch(err => {
     console.warn(err);
   });
@@ -165,7 +164,7 @@ let args = nopt({
 });
 
 let files = args.file || [];
-let base = args.base;
+let base = args.base || '.';
 let manifestName = args.manifest;
 // let basePath = args.argv.remain[0];
 // let inputPath = args.argv.remain[1];
